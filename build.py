@@ -11,7 +11,7 @@ from content import (SITE, NAV, STATS, ADVANTAGES, LOGISTICS, STEPS, DOCS,
                      FAQ, CATS, SHELF, CATALOG, INDUSTRIES)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-V = "1"  # версия статики для кэша
+V = "2"  # версия статики для кэша
 
 TEL = SITE["phone_href"]
 PHONE = SITE["phone"]
@@ -85,7 +85,8 @@ def head(title, desc, path, extra_ld=None, og_img="hero-drums", lcp=None):
 <link rel="preload" href="fonts/golos-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
 %(lcp)s
 <link rel="stylesheet" href="site.css?v=%(v)s">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script type="application/ld+json">%(ld)s</script>
 </head>
 <body>
@@ -301,12 +302,21 @@ def page_index():
         '<p class="small muted" style="margin:0">%s</p></div>' % (n, e(t), e(b))
         for n, t, b in ADVANTAGES)
     cats = "".join(
-        '<a href="%s.html" style="text-decoration:none;color:inherit;display:flex;'
-        'flex-direction:column;gap:8px"><div class="kicker">%s</div>'
-        '<h3 style="font-size:20px;margin:0">%s</h3><p class="small muted" style="margin:0;flex:1">%s</p>'
-        '<div class="small" style="color:var(--accent);font-weight:800">Подробнее и цены →</div></a>'
-        % (c["slug"], e(c["kicker"]), e(c["title"]), e(c["short"])) for c in CATS)
+        '<a class="tile" href="%s.html"><div class="tile__ph grayscale">%s</div>'
+        '<div class="tile__body"><div class="kicker">%s</div>'
+        '<h3 style="font-size:20px;margin:0">%s</h3>'
+        '<p class="small muted" style="margin:0">%s</p>'
+        '<div class="tile__more">Подробнее и цены →</div></div></a>'
+        % (c["slug"], pic(c["photo"] + "-t", c["alt"], w=560, h=315),
+           e(c["kicker"]), e(c["title"]), e(c["short"])) for c in CATS)
     logi = "".join('<div><b>%s</b><span>%s</span></div>' % (e(a), e(b)) for a, b in LOGISTICS)
+    who = "".join(
+        '<a href="industries.html"><div class="who__ph grayscale">%s</div>'
+        '<div class="who__body"><div class="kicker">%s</div>'
+        '<h3 style="font-size:19px;margin:6px 0 6px">%s</h3>'
+        '<p class="small muted" style="margin:0">%s</p></div></a>'
+        % (pic(i["photo"] + "-t", i["alt"], w=560, h=315), i["num"], e(i["title"]),
+           e(i["body"].split(":")[0] + ".")) for i in INDUSTRIES)
 
     ld = [ld_faq(FAQ), {
         "@context": "https://schema.org", "@type": "LocalBusiness",
@@ -325,6 +335,7 @@ def page_index():
         "index.html", ld, lcp="hero-drums")
         + header("index.html") + """
 <section class="sec"><div class="wrap"><div class="hero">
+  <div class="hero__media grayscale">%(heropic)s</div>
   <div class="hero__l">
     <span class="tag tag-outline">Поставки B2B по всей республике</span>
     <h1>Индустриальные масла ЛУКОЙЛ в бочках — со склада в Ташкенте</h1>
@@ -365,26 +376,38 @@ def page_index():
   </div>
 </div></div></section>
 
+<section class="sec"><div class="wrap sec-pad">
+  <div style="display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:26px">
+    <h2 style="margin:0">Кому поставляем</h2>
+    <a class="btn btn-ghost" href="industries.html">Подробно по отраслям →</a>
+  </div>
+  <div class="who">%(who)s</div>
+</div></section>
+
 %(faq)s
 %(cta)s
 """ % {"tel": TEL, "phone": e(PHONE), "stats": stats, "adv": adv, "cats": cats, "logi": logi,
+       "who": who,
+       "heropic": pic("hero-drums", "Бочки со смазочными материалами ЛУКОЙЛ на складе",
+                      w=1200, h=1391, eager=True),
        "form": form("f", "Запрос прайс-листа",
                     "Ответим в течение рабочего часа с ценами под ваш объём.",
                     "Что нужно поставить",
                     "Например: 10W-40 для 40 грузовиков, бочки 216,5 л"),
-       "photo": pic("hero-drums", "Бочки со смазочными материалами ЛУКОЙЛ на паллете",
-                    w=1200, h=1391, eager=True),
+       "photo": pic("bottling", "Линия розлива смазочных материалов", w=1400, h=760),
        "faq": faq_block(FAQ), "cta": cta()} + footer())
 
 
 def page_products():
     cats = "".join(
-        '<a href="%s.html" style="text-decoration:none;color:inherit;display:flex;'
-        'flex-direction:column;gap:8px"><div class="kicker">%s</div>'
-        '<h3 style="font-size:20px;margin:0">%s</h3><p class="small muted" style="margin:0;flex:1">%s</p>'
+        '<a class="tile" href="%s.html"><div class="tile__ph grayscale">%s</div>'
+        '<div class="tile__body"><div class="kicker">%s</div>'
+        '<h3 style="font-size:20px;margin:0">%s</h3>'
+        '<p class="small muted" style="margin:0">%s</p>'
         '<div class="small muted" style="border-top:1px solid var(--hair);padding-top:10px">%s</div>'
-        '<div class="small" style="color:var(--accent);font-weight:800">Смотреть марки и тару →</div></a>'
-        % (c["slug"], e(c["kicker"]), e(c["title"]), e(c["short"]), e(c["packs"])) for c in CATS)
+        '<div class="tile__more">Смотреть марки и тару →</div></div></a>'
+        % (c["slug"], pic(c["photo"] + "-t", c["alt"], w=560, h=315),
+           e(c["kicker"]), e(c["title"]), e(c["short"]), e(c["packs"])) for c in CATS)
 
     shelf = "".join(
         '<a href="%s.html"><div class="ph">%s</div><b>%s</b><span>%s</span></a>'
@@ -547,6 +570,7 @@ def page_cat(c):
     <div>
       <h2>Где применяется</h2>
       <div style="margin-top:18px;border-top:2px solid var(--divider)">%(uses)s</div>
+      <div class="shots">%(shots)s</div>
     </div>
     <div>
       <h2>Что уточнить при заказе</h2>
@@ -580,6 +604,9 @@ def page_cat(c):
        "lead": e(c["lead"]), "packs": e(c["packs"]), "tel": TEL, "phone": e(PHONE),
        "note": e(NOTE.capitalize()), "mail": MAIL,
        "heads": heads, "rows": rows, "uses": uses, "ask": ask,
+       "shots": "".join('<div class="shots__i grayscale">%s</div>'
+                        % pic(s + "-t", alt, w=560, h=315)
+                        for s, alt in c["shots"]),
        "faq": faq_block(c["faq"], "Вопросы по группе"),
        "form": form("c", "Запрос цены", "Укажите марку, объём и периодичность поставки.",
                     "Что нужно поставить", "Например: %s, 6 бочек в квартал" % c["nav"]),
@@ -679,6 +706,7 @@ def page_about():
   <div class="split__body">
     <h2>Документы на партию</h2>
     <div style="display:flex;flex-direction:column;gap:12px;margin-top:18px">%(docs)s</div>
+    <div class="grayscale" style="margin-top:20px;aspect-ratio:16/9;overflow:hidden">%(plant)s</div>
     <p class="small muted" style="margin-top:14px">Копии дистрибьюторского соглашения и сертификатов
       предоставляем вместе с коммерческим предложением.</p>
   </div>
@@ -698,6 +726,7 @@ def page_about():
 %(cta)s
 """ % {"cr": crumbs(cr), "steps": steps, "docs": docs, "logi": logi,
        "photo": pic("bottling", "Линия розлива смазочных материалов", w=1400, h=760),
+       "plant": pic("plant-t", "Нефтеперерабатывающий завод ЛУКОЙЛ", w=560, h=315),
        "cta": cta()} + footer())
 
 
@@ -735,9 +764,11 @@ def page_contacts():
       <a class="btn btn-primary" href="mailto:%(mail)s">Написать на почту</a>
       <button class="btn btn-secondary" type="button" data-callback>Обратный звонок</button>
     </div>
-    <div style="margin-top:28px;position:relative;border:2px solid var(--divider)">
+    <div style="margin-top:28px;border:2px solid var(--divider)">
       <div class="grayscale">%(map)s</div>
     </div>
+    <p class="fineprint" style="margin-top:8px">Сеть поставок ЛУКОЙЛ. Точку на карте Ташкента
+      и схему проезда к складу пришлём вместе с коммерческим предложением.</p>
   </div>
   <div class="split__body">%(form)s</div>
 </div></div></section>
@@ -772,12 +803,6 @@ def page_404():
 """ % {"tel": TEL, "phone": e(PHONE), "cta": cta()} + footer())
 
 
-FAVICON = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-<rect width="32" height="32" fill="#ec3013"/>
-<path d="M7 24V8h4.4v12.2H21V24H7zm12.4-4.6L23 8h4.4l-3.6 11.4h-4.4z" fill="#f3f2f2"/>
-</svg>"""
-
-
 def sitemap(pages):
     urls = "".join(
         '<url><loc>%s</loc><changefreq>monthly</changefreq><priority>%s</priority></url>'
@@ -809,7 +834,6 @@ def main():
     write("about.html", minify(page_about()))
     write("contacts.html", minify(page_contacts()))
     write("404.html", minify(page_404()))
-    write("favicon.svg", FAVICON)
 
     pages = ([("index.html", "1.0"), ("products.html", "0.9")]
              + [(c["slug"] + ".html", "0.8") for c in CATS]
