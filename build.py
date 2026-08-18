@@ -11,7 +11,7 @@ from content import (SITE, NAV, STATS, ADVANTAGES, LOGISTICS, STEPS, DOCS,
                      FAQ, CATS, SHELF, CATALOG, INDUSTRIES)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-V = "2"  # версия статики для кэша
+V = "5"  # версия статики для кэша
 
 TEL = SITE["phone_href"]
 PHONE = SITE["phone"]
@@ -240,6 +240,17 @@ def footer():
     </div>
   </div>
 </div>
+
+<svg class="duo-def" aria-hidden="true" focusable="false" width="0" height="0">
+  <filter id="duo" color-interpolation-filters="sRGB">
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer>
+      <feFuncR type="table" tableValues="0.10 0.34 0.62 0.86 0.97"/>
+      <feFuncG type="table" tableValues="0.10 0.15 0.27 0.60 0.96"/>
+      <feFuncB type="table" tableValues="0.10 0.13 0.21 0.50 0.95"/>
+    </feComponentTransfer>
+  </filter>
+</svg>
 
 <nav class="mbar" aria-label="Быстрая связь">
   <a href="tel:%(tel)s">Позвонить</a>
