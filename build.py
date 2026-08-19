@@ -11,7 +11,7 @@ from content import (SITE, NAV, STATS, ADVANTAGES, LOGISTICS, STEPS, DOCS,
                      FAQ, CATS, SHELF, CATALOG, INDUSTRIES)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-V = "10"  # версия статики для кэша
+V = "13"  # версия статики для кэша
 
 TEL = SITE["phone_href"]
 PHONE = SITE["phone"]
@@ -351,10 +351,11 @@ def page_index():
       <a class="btn btn-secondary" href="products.html#finder">Подбор масла по технике</a>
       <a class="btn btn-ghost" href="tel:%(tel)s">%(phone)s</a>
     </div>
-    <div class="stats">%(stats)s</div>
   </div>
   <div class="hero__r" id="request">%(form)s</div>
 </div></div></section>
+
+<section class="sec"><div class="wrap"><div class="stats">%(stats)s</div></div></section>
 
 <section class="sec"><div class="wrap sec-pad">
   <h2>Что даёт статус официального дистрибьютора</h2>
