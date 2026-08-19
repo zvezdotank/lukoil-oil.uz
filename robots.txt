@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /README.md
+Disallow: /PHOTO.md
+Disallow: /build.py
+Disallow: /content.py
 
 Sitemap: https://lukoil-oil.uz/sitemap.xml

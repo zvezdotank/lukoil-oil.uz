@@ -861,7 +861,10 @@ def main():
              + [(c["slug"] + ".html", "0.8") for c in CATS]
              + [("industries.html", "0.7"), ("about.html", "0.6"), ("contacts.html", "0.8")])
     write("sitemap.xml", sitemap(pages))
-    write("robots.txt", "User-agent: *\nAllow: /\n\nSitemap: %s/sitemap.xml\n" % BASE)
+    write("robots.txt", "User-agent: *\nAllow: /\n"
+                     "Disallow: /README.md\nDisallow: /PHOTO.md\n"
+                     "Disallow: /build.py\nDisallow: /content.py\n\n"
+                     "Sitemap: %s/sitemap.xml\n" % BASE)
     write("CNAME", SITE["domain"] + "\n")
     print("Готово: %d страниц" % (len(pages) + 1))
 
