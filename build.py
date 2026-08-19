@@ -11,7 +11,7 @@ from content import (SITE, NAV, STATS, ADVANTAGES, LOGISTICS, STEPS, DOCS,
                      FAQ, CATS, SHELF, CATALOG, INDUSTRIES)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-V = "8"  # версия статики для кэша
+V = "9"  # версия статики для кэша
 
 TEL = SITE["phone_href"]
 PHONE = SITE["phone"]
@@ -245,17 +245,6 @@ def footer():
   </div>
 </div>
 
-<svg class="duo-def" aria-hidden="true" focusable="false" width="0" height="0">
-  <filter id="duo" color-interpolation-filters="sRGB">
-    <feColorMatrix type="saturate" values="0"/>
-    <feComponentTransfer>
-      <feFuncR type="table" tableValues="0.10 0.34 0.62 0.86 0.97"/>
-      <feFuncG type="table" tableValues="0.10 0.15 0.27 0.60 0.96"/>
-      <feFuncB type="table" tableValues="0.10 0.13 0.21 0.50 0.95"/>
-    </feComponentTransfer>
-  </filter>
-</svg>
-
 <nav class="mbar" aria-label="Быстрая связь">
   <a href="tel:%(tel)s">Позвонить</a>
   <a href="mailto:%(mail)s">Написать</a>
@@ -347,10 +336,9 @@ def page_index():
         "Масла ЛУКОЙЛ в Узбекистане — официальный дистрибьютор, Ташкент",
         "Индустриальные, гидравлические и моторные масла ЛУКОЙЛ в бочках 216,5 л со склада "
         "в Ташкенте. Складские цены, подбор по технике, отгрузка в день заявки.",
-        "index.html", ld, lcp="drum")
+        "index.html", ld)
         + header("index.html") + """
 <section class="sec"><div class="wrap"><div class="hero">
-  <div class="hero__media">%(heropic)s</div>
   <div class="hero__l">
     <span class="tag tag-outline">Поставки B2B по всей республике</span>
     <h1>Индустриальные масла ЛУКОЙЛ в бочках — со склада в Ташкенте</h1>
@@ -403,14 +391,6 @@ def page_index():
 %(cta)s
 """ % {"tel": TEL, "phone": e(PHONE), "stats": stats, "adv": adv, "cats": cats, "logi": logi,
        "who": who,
-       "heropic": (
-           '<picture>'
-           '<source media="(max-width:900px)" srcset="img/drum-w.webp?v=%(v)s" type="image/webp">'
-           '<source media="(max-width:900px)" srcset="img/drum-w.jpg?v=%(v)s" type="image/jpeg">'
-           '<source srcset="img/drum.webp?v=%(v)s" type="image/webp">'
-           '<img src="img/drum.jpg?v=%(v)s" width="700" height="1383" decoding="async"'
-           ' fetchpriority="high" alt="Бочка смазочного материала ЛУКОЙЛ 216,5 л">'
-           '</picture>' % {"v": V}),
        "form": form("f", "Запрос прайс-листа",
                     "Ответим в течение рабочего часа с ценами под ваш объём.",
                     "Что нужно поставить",
