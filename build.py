@@ -11,7 +11,7 @@ from content import (SITE, NAV, STATS, ADVANTAGES, LOGISTICS, STEPS, DOCS,
                      FAQ, CATS, SHELF, CATALOG, INDUSTRIES)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-V = "9"  # версия статики для кэша
+V = "10"  # версия статики для кэша
 
 TEL = SITE["phone_href"]
 PHONE = SITE["phone"]
@@ -336,9 +336,10 @@ def page_index():
         "Масла ЛУКОЙЛ в Узбекистане — официальный дистрибьютор, Ташкент",
         "Индустриальные, гидравлические и моторные масла ЛУКОЙЛ в бочках 216,5 л со склада "
         "в Ташкенте. Складские цены, подбор по технике, отгрузка в день заявки.",
-        "index.html", ld)
+        "index.html", ld, lcp="hero-drums")
         + header("index.html") + """
 <section class="sec"><div class="wrap"><div class="hero">
+  <div class="hero__media">%(heropic)s</div>
   <div class="hero__l">
     <span class="tag tag-outline">Поставки B2B по всей республике</span>
     <h1>Индустриальные масла ЛУКОЙЛ в бочках — со склада в Ташкенте</h1>
@@ -391,11 +392,13 @@ def page_index():
 %(cta)s
 """ % {"tel": TEL, "phone": e(PHONE), "stats": stats, "adv": adv, "cats": cats, "logi": logi,
        "who": who,
+       "heropic": pic("hero-drums", "Складские стеллажи с бочками смазочных материалов ЛУКОЙЛ",
+                      w=680, h=1904, eager=True),
        "form": form("f", "Запрос прайс-листа",
                     "Ответим в течение рабочего часа с ценами под ваш объём.",
                     "Что нужно поставить",
                     "Например: 10W-40 для 40 грузовиков, бочки 216,5 л"),
-       "photo": pic("bottling", "Линия розлива смазочных материалов", w=1400, h=760),
+       "photo": pic("bottling", "Погрузчик с паллетой бочек на складе", w=1120, h=630),
        "faq": faq_block(FAQ), "cta": cta()} + footer())
 
 
@@ -727,8 +730,8 @@ def page_about():
 </div></div></section>
 %(cta)s
 """ % {"cr": crumbs(cr), "steps": steps, "docs": docs, "logi": logi,
-       "photo": pic("bottling", "Линия розлива смазочных материалов", w=1400, h=760),
-       "plant": pic("plant-t", "Нефтеперерабатывающий завод ЛУКОЙЛ", w=560, h=315),
+       "photo": pic("bottling", "Погрузчик с паллетой бочек на складе", w=1120, h=630),
+       "plant": pic("plant-t", "Приёмка партии на складе: документы и паллеты", w=560, h=315),
        "cta": cta()} + footer())
 
 
@@ -769,15 +772,15 @@ def page_contacts():
     <div style="margin-top:28px;border:2px solid var(--divider)">
       <div class="grayscale">%(map)s</div>
     </div>
-    <p class="fineprint" style="margin-top:8px">Сеть поставок ЛУКОЙЛ. Точку на карте Ташкента
-      и схему проезда к складу пришлём вместе с коммерческим предложением.</p>
+    <p class="fineprint" style="margin-top:8px">Точку на карте Ташкента и схему проезда
+      к складу пришлём вместе с коммерческим предложением.</p>
   </div>
   <div class="split__body">%(form)s</div>
 </div></div></section>
 %(cta)s
 """ % {"cr": crumbs(cr), "tel": TEL, "phone": e(PHONE), "note": e(NOTE), "mail": MAIL,
        "mail2": SITE["mail2"], "addr": e(SITE["addr"]), "hours": e(SITE["hours"]),
-       "map": pic("map", "Карта дистрибуции ЛУКОЙЛ", w=1320, h=1530),
+       "map": pic("map", "Погрузочные доки складского комплекса", w=1120, h=630),
        "form": form("k", "Заявка на прайс или подбор",
                     "Опишите технику и объём — вернём цены и сроки в тот же день.",
                     "Техника и объём",
