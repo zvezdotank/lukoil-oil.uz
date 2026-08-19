@@ -11,13 +11,16 @@ from content import (SITE, NAV, STATS, ADVANTAGES, LOGISTICS, STEPS, DOCS,
                      FAQ, CATS, SHELF, CATALOG, INDUSTRIES)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-V = "5"  # версия статики для кэша
+V = "7"  # версия статики для кэша
 
 TEL = SITE["phone_href"]
 PHONE = SITE["phone"]
 NOTE = SITE["phone_note"]
 MAIL = SITE["mail"]
 BASE = SITE["base"]
+
+
+DRUM = '<svg class="drum" viewBox="0 0 64 104" aria-hidden="true" focusable="false"><path d="M4 12h56v80a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V12Z" fill="currentColor" opacity=".9"/><ellipse cx="32" cy="12" rx="28" ry="8" fill="currentColor"/><ellipse cx="32" cy="12" rx="20" ry="5.4" fill="#000" opacity=".16"/><rect x="4" y="28" width="56" height="6" fill="#000" opacity=".18"/><rect x="4" y="72" width="56" height="6" fill="#000" opacity=".18"/><rect x="4" y="44" width="56" height="18" fill="#fff" opacity=".92"/></svg>'
 
 
 def e(s):
@@ -165,6 +168,7 @@ def form(idp, title, sub, note_label, note_ph, kinds=("Прайс", "Подбо�
 def cta():
     return """<section class="cta">
   <div class="wrap"><div class="cta__in">
+    <div class="cta__drum">%(drum)s</div>
     <h2>Пришлите список позиций — вернём прайс и сроки в тот же день</h2>
     <div class="cta__side">
       <div>
@@ -179,7 +183,7 @@ def cta():
       </div>
     </div>
   </div></div>
-</section>""" % {"tel": TEL, "phone": e(PHONE), "note": e(NOTE), "mail": MAIL}
+</section>""" % {"tel": TEL, "phone": e(PHONE), "note": e(NOTE), "mail": MAIL, "drum": DRUM}
 
 
 def footer():
@@ -343,10 +347,10 @@ def page_index():
         "Масла ЛУКОЙЛ в Узбекистане — официальный дистрибьютор, Ташкент",
         "Индустриальные, гидравлические и моторные масла ЛУКОЙЛ в бочках 216,5 л со склада "
         "в Ташкенте. Складские цены, подбор по технике, отгрузка в день заявки.",
-        "index.html", ld, lcp="hero-drums")
+        "index.html", ld, lcp="drum")
         + header("index.html") + """
 <section class="sec"><div class="wrap"><div class="hero">
-  <div class="hero__media grayscale">%(heropic)s</div>
+  <div class="hero__media">%(heropic)s</div>
   <div class="hero__l">
     <span class="tag tag-outline">Поставки B2B по всей республике</span>
     <h1>Индустриальные масла ЛУКОЙЛ в бочках — со склада в Ташкенте</h1>
@@ -399,8 +403,14 @@ def page_index():
 %(cta)s
 """ % {"tel": TEL, "phone": e(PHONE), "stats": stats, "adv": adv, "cats": cats, "logi": logi,
        "who": who,
-       "heropic": pic("hero-drums", "Бочки со смазочными материалами ЛУКОЙЛ на складе",
-                      w=1200, h=1391, eager=True),
+       "heropic": (
+           '<picture>'
+           '<source media="(max-width:900px)" srcset="img/drum-w.webp?v=%(v)s" type="image/webp">'
+           '<source media="(max-width:900px)" srcset="img/drum-w.jpg?v=%(v)s" type="image/jpeg">'
+           '<source srcset="img/drum.webp?v=%(v)s" type="image/webp">'
+           '<img src="img/drum.jpg?v=%(v)s" width="700" height="1383" decoding="async"'
+           ' fetchpriority="high" alt="Бочка смазочного материала ЛУКОЙЛ 216,5 л">'
+           '</picture>' % {"v": V}),
        "form": form("f", "Запрос прайс-листа",
                     "Ответим в течение рабочего часа с ценами под ваш объём.",
                     "Что нужно поставить",
@@ -553,7 +563,7 @@ def page_cat(c):
     <h1 style="margin:16px 0 14px">%(title)s</h1>
     <p class="lead" style="max-width:56ch">%(lead)s</p>
     <div class="rows" style="margin-top:22px">
-      <div><b>ТАРА</b><span>%(packs)s</span></div>
+      <div><b>ТАРА</b><span class="withdrum">%(drumi)s%(packs)s</span></div>
       <div><b>СКЛАД</b><span>Ходовые позиции — постоянный запас в Ташкенте</span></div>
       <div><b>ДОКУМЕНТЫ</b><span>Паспорт качества и сертификат на каждую партию</span></div>
     </div>
@@ -612,7 +622,8 @@ def page_cat(c):
 %(cta)s
 """ % {"photo": pic(c["photo"], c["alt"], w=1120, h=628, eager=True),
        "cr": crumbs(cr), "kicker": e(c["kicker"]), "title": e(c["title"]),
-       "lead": e(c["lead"]), "packs": e(c["packs"]), "tel": TEL, "phone": e(PHONE),
+       "lead": e(c["lead"]), "packs": e(c["packs"]), "drumi": DRUM,
+       "tel": TEL, "phone": e(PHONE),
        "note": e(NOTE.capitalize()), "mail": MAIL,
        "heads": heads, "rows": rows, "uses": uses, "ask": ask,
        "shots": "".join('<div class="shots__i grayscale">%s</div>'
