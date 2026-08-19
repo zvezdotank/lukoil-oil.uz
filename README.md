@@ -62,6 +62,18 @@ python3 -m http.server 4328
 
 Телефон помечен мелкой припиской «номер не активный с июня 2017» — рабочий канал почта.
 
+## Подпись агентства
+
+В подвале каждой страницы — «Сайт и продвижение — Sales HUB» со ссылкой
+на sales-hub.uz и UTM-метками, где `utm_source` — домен этого сайта:
+
+```
+https://sales-hub.uz/?utm_source=lukoil-oil.uz&utm_medium=referral&utm_campaign=footer
+```
+
+По меткам в аналитике видно, с какого клиентского сайта пришёл человек.
+Правится в `content.py` → `SITE["agency_url"]`.
+
 ## SEO
 
 - Уникальные `title` (≤70) и `description` (≤165) на каждой странице.

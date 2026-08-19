@@ -11,7 +11,7 @@ from content import (SITE, NAV, STATS, ADVANTAGES, LOGISTICS, STEPS, DOCS,
                      FAQ, CATS, SHELF, CATALOG, INDUSTRIES)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-V = "17"  # версия статики для кэша
+V = "18"  # версия статики для кэша
 
 TEL = SITE["phone_href"]
 PHONE = SITE["phone"]
@@ -221,6 +221,11 @@ def footer():
         <span class="muted">%(addr)s</span>
         <span class="muted">%(hours)s</span>
       </div>
+      <div class="foot__col">
+        <span class="tiny">Сайт и продвижение</span>
+        <a class="foot__agency" href="%(agency_url)s" target="_blank" rel="noopener">%(agency)s</a>
+        <span class="muted">Разработка сайта и лидогенерация</span>
+      </div>
     </div>
     <div class="foot__bar">
       ЛУКОЙЛ и названия продуктовых линеек — товарные знаки правообладателя.
@@ -264,7 +269,8 @@ def footer():
 </html>
 """ % {"domain": SITE["domain"], "cats": cats, "tel": TEL, "phone": e(PHONE),
        "note": e(NOTE), "mail": MAIL, "mail2": SITE["mail2"],
-       "addr": e(SITE["addr"]), "hours": e(SITE["hours"]), "v": V}
+       "addr": e(SITE["addr"]), "hours": e(SITE["hours"]), "v": V,
+       "agency": e(SITE["agency"]), "agency_url": e(SITE["agency_url"])}
 
 
 def crumbs(items):

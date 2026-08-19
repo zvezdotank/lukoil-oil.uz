@@ -147,7 +147,7 @@ textarea.input{min-height:92px;resize:vertical}
 .hero{display:grid;grid-template-columns:minmax(240px,18vw) 1.3fr 1fr}
 .hero>*{min-width:0}
 .hero__media{border-right:2px solid var(--divider);min-height:100%;
-  background:var(--surface) url(img/hero-drums.webp?v=14) center/cover no-repeat;
+  background:var(--surface) url(img/hero-drums.webp) center/cover no-repeat;
   filter:saturate(.96) contrast(1.02)}
 .hero__l{padding:52px 44px 52px 44px;border-right:2px solid var(--divider)}
 .hero__r{padding:52px 0 52px 36px}
@@ -258,11 +258,13 @@ a.tile:hover .tile__more{color:var(--accent-700)}
 
 /* — подвал — */
 .foot{border-top:2px solid var(--divider);margin-top:auto}
-.foot__grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:36px;padding:44px 0 32px}
+.foot__grid{display:grid;grid-template-columns:1.4fr 1fr 1.1fr .9fr;gap:32px;padding:44px 0 32px}
 .foot__col{display:flex;flex-direction:column;gap:7px;font-size:13px}
 .foot__col a{color:inherit;text-decoration:none}
 .foot__col a:hover{color:var(--accent)}
 .foot__brand{font-weight:800;font-size:18px}
+.foot__agency{font-weight:800;font-size:16px;color:var(--accent)}
+.foot__agency:hover{color:var(--accent-700)}
 .foot__bar{border-top:1px solid var(--hair);padding:16px 0 30px;font-size:11px;color:var(--n600)}
 
 /* — страница-заголовок — */

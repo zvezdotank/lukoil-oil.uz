@@ -15,6 +15,8 @@ SITE = {
     "addr": "г. Ташкент, Мирабадский район, ул. Нукус, дом 71",
     "addr_short": "ул. Нукус, 71, Мирабадский р-н",
     "hours": "Пн–сб 9:00–18:00, отгрузка до 17:00",
+    "agency": "Sales HUB",
+    "agency_url": "https://sales-hub.uz/?utm_source=lukoil-oil.uz&utm_medium=referral&utm_campaign=footer",
 }
 
 NAV = [
