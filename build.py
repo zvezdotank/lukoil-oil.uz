@@ -11,7 +11,7 @@ from content import (SITE, NAV, STATS, ADVANTAGES, LOGISTICS, STEPS, DOCS,
                      FAQ, CATS, SHELF, CATALOG, INDUSTRIES)
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-V = "13"  # версия статики для кэша
+V = "17"  # версия статики для кэша
 
 TEL = SITE["phone_href"]
 PHONE = SITE["phone"]
@@ -19,6 +19,8 @@ NOTE = SITE["phone_note"]
 MAIL = SITE["mail"]
 BASE = SITE["base"]
 
+
+ARROW = '<svg class="arw" viewBox="0 0 14 10" aria-hidden="true" focusable="false"><path d="M9 1l4 4-4 4M13 5H1" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg>'
 
 DRUM = '<svg class="drum" viewBox="0 0 64 104" aria-hidden="true" focusable="false"><path d="M4 12h56v80a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V12Z" fill="currentColor" opacity=".9"/><ellipse cx="32" cy="12" rx="28" ry="8" fill="currentColor"/><ellipse cx="32" cy="12" rx="20" ry="5.4" fill="#000" opacity=".16"/><rect x="4" y="28" width="56" height="6" fill="#000" opacity=".18"/><rect x="4" y="72" width="56" height="6" fill="#000" opacity=".18"/><rect x="4" y="44" width="56" height="18" fill="#fff" opacity=".92"/></svg>'
 
@@ -38,11 +40,17 @@ def pic(name, alt, cls="", w=None, h=None, eager=False, sizes=None):
         attrs.append('height="%d"' % h)
     attrs.append('decoding="async"')
     attrs.append('fetchpriority="high"' if eager else 'loading="lazy"')
-    return ('<picture><source srcset="img/%s.webp?v=%s" type="image/webp">'
-            '<img %s></picture>' % (name, V, " ".join(attrs)))
+    mob = os.path.exists(os.path.join(ROOT, "img", name + "-m.webp"))
+    sources = ""
+    if mob:
+        sources = ('<source media="(max-width:900px)" srcset="img/%s-m.webp?v=%s" type="image/webp">'
+                   '<source media="(max-width:900px)" srcset="img/%s-m.jpg?v=%s" type="image/jpeg">'
+                   % (name, V, name, V))
+    return ('<picture>%s<source srcset="img/%s.webp?v=%s" type="image/webp">'
+            '<img %s></picture>' % (sources, name, V, " ".join(attrs)))
 
 
-def head(title, desc, path, extra_ld=None, og_img="hero-drums", lcp=None):
+def head(title, desc, path, extra_ld=None, og_img="hero-drums", lcp=None, lcp_media=""):
     canon = BASE + ("/" if path == "index.html" else "/" + path)
     ld = [{
         "@context": "https://schema.org",
@@ -85,7 +93,8 @@ def head(title, desc, path, extra_ld=None, og_img="hero-drums", lcp=None):
 <meta property="og:image" content="%(base)s/img/%(og)s.jpg">
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="preload" href="fonts/golos-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/golos-cyr.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/golos-lat.woff2" as="font" type="font/woff2" crossorigin>
 %(lcp)s
 <link rel="stylesheet" href="site.css?v=%(v)s">
 <link rel="icon" href="favicon.ico" sizes="any">
@@ -97,8 +106,8 @@ def head(title, desc, path, extra_ld=None, og_img="hero-drums", lcp=None):
 """ % {
         "title": e(title), "desc": e(desc), "canon": canon, "base": BASE,
         "og": og_img, "v": V,
-        "lcp": ('<link rel="preload" as="image" href="img/%s.webp?v=%s" '
-                'type="image/webp" fetchpriority="high">' % (lcp, V)) if lcp else "",
+        "lcp": ('<link rel="preload" as="image" href="img/%s.webp?v=%s" type="image/webp"'
+                ' fetchpriority="high"%s>' % (lcp, V, lcp_media)) if lcp else "",
         "ld": json.dumps(ld, ensure_ascii=False, separators=(",", ":")),
     }
 
@@ -263,7 +272,7 @@ def crumbs(items):
     parts = []
     for href, label in items:
         parts.append('<a href="%s">%s</a>' % (href, e(label)) if href else e(label))
-    return '<nav class="crumbs" aria-label="Хлебные крошки">%s</nav>' % " → ".join(parts)
+    return '<nav class="crumbs" aria-label="Хлебные крошки">%s</nav>' % ' <span class="crumbs__s">/</span> '.join(parts)
 
 
 def ld_crumbs(items):
@@ -310,9 +319,9 @@ def page_index():
         '<div class="tile__body"><div class="kicker">%s</div>'
         '<h3 style="font-size:20px;margin:0">%s</h3>'
         '<p class="small muted" style="margin:0">%s</p>'
-        '<div class="tile__more">Подробнее и цены →</div></div></a>'
+        '<div class="tile__more">Подробнее и цены %s</div></div></a>'
         % (c["slug"], pic(c["photo"] + "-t", c["alt"], w=560, h=315),
-           e(c["kicker"]), e(c["title"]), e(c["short"])) for c in CATS)
+           e(c["kicker"]), e(c["title"]), e(c["short"]), ARROW) for c in CATS)
     logi = "".join('<div><b>%s</b><span>%s</span></div>' % (e(a), e(b)) for a, b in LOGISTICS)
     who = "".join(
         '<a href="industries.html"><div class="who__ph grayscale">%s</div>'
@@ -336,10 +345,11 @@ def page_index():
         "Масла ЛУКОЙЛ в Узбекистане — официальный дистрибьютор, Ташкент",
         "Индустриальные, гидравлические и моторные масла ЛУКОЙЛ в бочках 216,5 л со склада "
         "в Ташкенте. Складские цены, подбор по технике, отгрузка в день заявки.",
-        "index.html", ld, lcp="hero-drums")
+        "index.html", ld, lcp="hero-drums",
+        lcp_media=' media="(min-width:1181px)"')
         + header("index.html") + """
 <section class="sec"><div class="wrap"><div class="hero">
-  <div class="hero__media">%(heropic)s</div>
+  <div class="hero__media" role="img" aria-label="Складские стеллажи с бочками смазочных материалов ЛУКОЙЛ"></div>
   <div class="hero__l">
     <span class="tag tag-outline">Поставки B2B по всей республике</span>
     <h1>Индустриальные масла ЛУКОЙЛ в бочках — со склада в Ташкенте</h1>
@@ -365,7 +375,7 @@ def page_index():
 <section class="sec"><div class="wrap sec-pad">
   <div style="display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:26px">
     <h2 style="margin:0">Продукция на складе</h2>
-    <a class="btn btn-ghost" href="products.html">Все категории и подбор →</a>
+    <a class="btn btn-ghost" href="products.html">Все категории и подбор %(arrow)s</a>
   </div>
   <div class="grid g3">%(cats)s</div>
 </div></section>
@@ -384,7 +394,7 @@ def page_index():
 <section class="sec"><div class="wrap sec-pad">
   <div style="display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:26px">
     <h2 style="margin:0">Кому поставляем</h2>
-    <a class="btn btn-ghost" href="industries.html">Подробно по отраслям →</a>
+    <a class="btn btn-ghost" href="industries.html">Подробно по отраслям %(arrow)s</a>
   </div>
   <div class="who">%(who)s</div>
 </div></section>
@@ -392,9 +402,7 @@ def page_index():
 %(faq)s
 %(cta)s
 """ % {"tel": TEL, "phone": e(PHONE), "stats": stats, "adv": adv, "cats": cats, "logi": logi,
-       "who": who,
-       "heropic": pic("hero-drums", "Складские стеллажи с бочками смазочных материалов ЛУКОЙЛ",
-                      w=680, h=1904, eager=True),
+       "who": who, "arrow": ARROW,
        "form": form("f", "Запрос прайс-листа",
                     "Ответим в течение рабочего часа с ценами под ваш объём.",
                     "Что нужно поставить",
@@ -410,9 +418,9 @@ def page_products():
         '<h3 style="font-size:20px;margin:0">%s</h3>'
         '<p class="small muted" style="margin:0">%s</p>'
         '<div class="small muted" style="border-top:1px solid var(--hair);padding-top:10px">%s</div>'
-        '<div class="tile__more">Смотреть марки и тару →</div></div></a>'
+        '<div class="tile__more">Смотреть марки и тару %s</div></div></a>'
         % (c["slug"], pic(c["photo"] + "-t", c["alt"], w=560, h=315),
-           e(c["kicker"]), e(c["title"]), e(c["short"]), e(c["packs"])) for c in CATS)
+           e(c["kicker"]), e(c["title"]), e(c["short"]), e(c["packs"]), ARROW) for c in CATS)
 
     shelf = "".join(
         '<a href="%s.html"><div class="ph">%s</div><b>%s</b><span>%s</span></a>'
@@ -824,6 +832,25 @@ def minify(s):
     return s
 
 
+def minify_css(s):
+    s = re.sub(r"/\*.*?\*/", "", s, flags=re.S)
+    s = re.sub(r"\s*([{}:;,>])\s*", r"\1", s)
+    s = re.sub(r";}", "}", s)
+    s = re.sub(r"\s+", " ", s)
+    return s.strip()
+
+
+def minify_js(s):
+    out = []
+    for line in s.split("\n"):
+        t = line.strip()
+        if t.startswith("//") or t.startswith("/*") or t.startswith("*"):
+            continue
+        if t:
+            out.append(t)
+    return "\n".join(out)
+
+
 def write(name, data):
     with open(os.path.join(ROOT, name), "w", encoding="utf-8") as f:
         f.write(data)
@@ -850,6 +877,11 @@ def main():
                      "Disallow: /build.py\nDisallow: /content.py\n\n"
                      "Sitemap: %s/sitemap.xml\n" % BASE)
     write("CNAME", SITE["domain"] + "\n")
+
+    css = open(os.path.join(ROOT, "src.site.css"), encoding="utf-8").read()
+    write("site.css", minify_css(css))
+    js = open(os.path.join(ROOT, "src.site.js"), encoding="utf-8").read()
+    write("site.js", minify_js(js))
     print("Готово: %d страниц" % (len(pages) + 1))
 
 
